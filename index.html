@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>POS Barcode Bridge</title>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        font-family: sans-serif;
+        background: white;
+        text-align: center;
+    }
+
+    #reader {
+        width: 100%;
+        max-width: 500px;
+        margin: auto;
+    }
+
+    #barcode-area {
+        display: none;
+        padding: 20px;
+    }
+
+    #memberCode {
+        font-size: 32px;
+        font-weight: bold;
+        margin-top: 20px;
+        word-break: break-all;
+    }
+
+    #barcode {
+        margin-top: 40px;
+    }
+
+    button {
+        margin-top: 40px;
+        font-size: 24px;
+        padding: 15px 30px;
+    }
+
+    h1 {
+        margin-top: 20px;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="scan-area">
+
+    <h1>会員コード読取</h1>
+
+    <div id="reader"></div>
+
+</div>
+
+<div id="barcode-area">
+
+    <h1>POSでスキャンしてください</h1>
+
+    <div id="memberCode"></div>
+
+    <svg id="barcode"></svg>
+
+    <br>
+
+    <button onclick="goBack()">戻る</button>
+
+</div>
+
+<script>
+
+const scanArea = document.getElementById('scan-area');
+const barcodeArea = document.getElementById('barcode-area');
+const memberCode = document.getElementById('memberCode');
+
+const html5QrCode = new Html5Qrcode("reader");
+
+function startScanner() {
+
+    Html5Qrcode.getCameras().then(devices => {
+
+        if (devices && devices.length) {
+
+            html5QrCode.start(
+                { facingMode: "environment" },
+                {
+                    fps: 10,
+                    qrbox: 250
+                },
+                onScanSuccess
+            );
+        }
+    });
+}
+
+function onScanSuccess(decodedText) {
+
+    html5QrCode.stop();
+
+    showBarcode(decodedText);
+}
+
+function showBarcode(code) {
+
+    scanArea.style.display = 'none';
+    barcodeArea.style.display = 'block';
+
+    memberCode.innerText = code;
+
+    JsBarcode("#barcode", code, {
+        format: "CODE128",
+        width: 3,
+        height: 120,
+        displayValue: false,
+        background: "#ffffff",
+        lineColor: "#000000",
+        margin: 20
+    });
+}
+
+function goBack() {
+
+    barcodeArea.style.display = 'none';
+    scanArea.style.display = 'block';
+
+    startScanner();
+}
+
+startScanner();
+
+</script>
+
+</body>
+</html>
