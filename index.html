@@ -35,6 +35,12 @@ h1{
     margin-top:20px;
 }
 
+#guide{
+    margin-top:15px;
+    font-size:22px;
+    font-weight:bold;
+}
+
 #captureBtn{
     margin-top:25px;
     font-size:28px;
@@ -45,6 +51,7 @@ h1{
     margin-top:20px;
     font-size:24px;
     font-weight:bold;
+    color:#333;
 }
 
 #barcode-area{
@@ -73,6 +80,32 @@ canvas{
     display:none;
 }
 
+#scan-guide{
+
+    position:absolute;
+
+    left:10%;
+    top:45%;
+
+    width:80%;
+    height:18%;
+
+    border:4px solid red;
+
+    box-sizing:border-box;
+
+    pointer-events:none;
+}
+
+#camera-wrap{
+
+    position:relative;
+
+    display:inline-block;
+
+    width:100%;
+}
+
 </style>
 
 </head>
@@ -83,14 +116,24 @@ canvas{
 
     <h1>会員番号OCR読取</h1>
 
-    <video
-        id="video"
-        autoplay
-        playsinline
-        muted>
-    </video>
+    <div id="camera-wrap">
 
-    <br>
+        <video
+            id="video"
+            autoplay
+            playsinline
+            muted>
+        </video>
+
+        <div id="scan-guide"></div>
+
+    </div>
+
+    <div id="guide">
+
+        会員番号を赤枠に合わせてください
+
+    </div>
 
     <button id="captureBtn">
 
@@ -100,7 +143,7 @@ canvas{
 
     <div id="status">
 
-        会員番号を画面中央に合わせてください
+        待機中
 
     </div>
 
@@ -183,18 +226,37 @@ captureBtn.addEventListener(
         const context =
             canvas.getContext("2d");
 
-        canvas.width =
+        const vw =
             video.videoWidth;
 
-        canvas.height =
+        const vh =
             video.videoHeight;
 
+        const cropY =
+            vh * 0.45;
+
+        const cropHeight =
+            vh * 0.18;
+
+        canvas.width = vw;
+
+        canvas.height = cropHeight;
+
         context.drawImage(
+
             video,
+
+            0,
+            cropY,
+
+            vw,
+            cropHeight,
+
             0,
             0,
-            canvas.width,
-            canvas.height
+
+            vw,
+            cropHeight
         );
 
         const imageData =
@@ -211,10 +273,12 @@ captureBtn.addEventListener(
 
                     {
 
+                        tessedit_char_whitelist:
+                            '0123456789',
+
                         logger:m => {
                             console.log(m);
                         }
-
                     }
                 );
 
@@ -298,7 +362,7 @@ function goBack(){
         "block";
 
     statusText.innerText =
-        "会員番号を画面中央に合わせてください";
+        "待機中";
 }
 
 startCamera();
