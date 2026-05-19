@@ -4,50 +4,58 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>POS Barcode Bridge</title>
+<title>Barcode Bridge</title>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://unpkg.com/@zxing/library@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 <style>
-    body {
-        margin: 0;
-        font-family: sans-serif;
-        background: white;
-        text-align: center;
-    }
 
-    #reader {
-        width: 100%;
-        max-width: 500px;
-        margin: auto;
-    }
+body{
+    margin:0;
+    background:white;
+    font-family:sans-serif;
+    text-align:center;
+}
 
-    #barcode-area {
-        display: none;
-        padding: 20px;
-    }
+#scan-area{
+    display:block;
+}
 
-    #memberCode {
-        font-size: 32px;
-        font-weight: bold;
-        margin-top: 20px;
-        word-break: break-all;
-    }
+#video{
+    width:100%;
+    max-width:500px;
+    margin-top:20px;
+    border:4px solid #333;
+}
 
-    #barcode {
-        margin-top: 40px;
-    }
+#barcode-area{
+    display:none;
+    padding:20px;
+}
 
-    button {
-        margin-top: 40px;
-        font-size: 24px;
-        padding: 15px 30px;
-    }
+#memberCode{
+    font-size:32px;
+    font-weight:bold;
+    margin-top:30px;
+    word-break:break-all;
+}
 
-    h1 {
-        margin-top: 20px;
-    }
+button{
+    font-size:24px;
+    padding:15px 30px;
+    margin-top:40px;
+}
+
+h1{
+    margin-top:20px;
+}
+
+#guide{
+    font-size:22px;
+    margin-top:20px;
+}
+
 </style>
 </head>
 
@@ -55,9 +63,13 @@
 
 <div id="scan-area">
 
-    <h1>会員コード読取</h1>
+    <h1>会員バーコード読取</h1>
 
-    <div id="reader"></div>
+    <video id="video" autoplay playsinline></video>
+
+    <div id="guide">
+        バーコードをカメラに向けてください
+    </div>
 
 </div>
 
@@ -77,59 +89,72 @@
 
 <script>
 
-const scanArea = document.getElementById('scan-area');
-const barcodeArea = document.getElementById('barcode-area');
-const memberCode = document.getElementById('memberCode');
+const scanArea = document.getElementById("scan-area");
+const barcodeArea = document.getElementById("barcode-area");
+const memberCode = document.getElementById("memberCode");
 
-const html5QrCode = new Html5Qrcode("reader");
+const codeReader = new ZXing.BrowserMultiFormatReader();
 
-function startScanner() {
+async function startScanner(){
 
-    Html5Qrcode.getCameras().then(devices => {
+    try{
 
-        if (devices && devices.length) {
+        const videoInputDevices =
+            await codeReader.listVideoInputDevices();
 
-            html5QrCode.start(
-                { facingMode: "environment" },
-                {
-                    fps: 10,
-                    qrbox: 250
-                },
-                onScanSuccess
-            );
-        }
-    });
+        const selectedDeviceId =
+            videoInputDevices[0].deviceId;
+
+        codeReader.decodeFromVideoDevice(
+            selectedDeviceId,
+            'video',
+            (result, err) => {
+
+                if(result){
+
+                    const code = result.text;
+
+                    codeReader.reset();
+
+                    showBarcode(code);
+                }
+            }
+        );
+
+    }catch(error){
+
+        alert("カメラ起動エラー：" + error);
+    }
 }
 
-function onScanSuccess(decodedText) {
+function showBarcode(code){
 
-    html5QrCode.stop();
-
-    showBarcode(decodedText);
-}
-
-function showBarcode(code) {
-
-    scanArea.style.display = 'none';
-    barcodeArea.style.display = 'block';
+    scanArea.style.display = "none";
+    barcodeArea.style.display = "block";
 
     memberCode.innerText = code;
 
     JsBarcode("#barcode", code, {
-        format: "CODE128",
-        width: 3,
-        height: 120,
-        displayValue: false,
-        background: "#ffffff",
-        lineColor: "#000000",
-        margin: 20
+
+        format:"CODE128",
+
+        width:4,
+        height:150,
+
+        displayValue:false,
+
+        background:"#ffffff",
+        lineColor:"#000000",
+
+        margin:20
+
     });
 }
 
-function goBack() {
+function goBack(){
 
-    barcodeArea.style.display = 'none';
-    scanArea.style.display = 'block';
+    barcodeArea.style.display = "none";
+    scanArea.style.display = "block";
 
     startScanner();
 }
