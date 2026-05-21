@@ -25,6 +25,16 @@ body{
 
 h1{
     margin-top:20px;
+    font-size:30px;
+}
+
+#camera-wrap{
+
+    position:relative;
+
+    display:inline-block;
+
+    width:100%;
 }
 
 #video{
@@ -35,21 +45,40 @@ h1{
     margin-top:20px;
 }
 
+#scan-guide{
+
+    position:absolute;
+
+    left:12%;
+
+    top:45%;
+
+    width:76%;
+
+    height:16%;
+
+    border:3px solid red;
+
+    box-sizing:border-box;
+
+    pointer-events:none;
+}
+
 #guide{
     margin-top:15px;
-    font-size:22px;
+    font-size:20px;
     font-weight:bold;
 }
 
 #captureBtn{
     margin-top:25px;
-    font-size:28px;
+    font-size:24px;
     padding:15px 40px;
 }
 
 #status{
     margin-top:20px;
-    font-size:24px;
+    font-size:22px;
     font-weight:bold;
     color:#333;
 }
@@ -60,50 +89,26 @@ h1{
 }
 
 #memberCode{
-    font-size:34px;
+    font-size:22px;
     font-weight:bold;
-    margin-top:30px;
+    margin-top:25px;
     word-break:break-all;
+    letter-spacing:2px;
 }
 
 svg{
-    margin-top:40px;
+    margin-top:30px;
+    width:95%;
 }
 
 button{
-    margin-top:40px;
-    font-size:28px;
+    margin-top:35px;
+    font-size:24px;
     padding:15px 40px;
 }
 
 canvas{
     display:none;
-}
-
-#scan-guide{
-
-    position:absolute;
-
-    left:10%;
-    top:45%;
-
-    width:80%;
-    height:18%;
-
-    border:4px solid red;
-
-    box-sizing:border-box;
-
-    pointer-events:none;
-}
-
-#camera-wrap{
-
-    position:relative;
-
-    display:inline-block;
-
-    width:100%;
 }
 
 </style>
@@ -236,7 +241,7 @@ captureBtn.addEventListener(
             vh * 0.45;
 
         const cropHeight =
-            vh * 0.18;
+            vh * 0.16;
 
         canvas.width = vw;
 
@@ -338,9 +343,9 @@ function showBarcode(code){
 
             format:"CODE128",
 
-            width:4,
+            width:2,
 
-            height:180,
+            height:120,
 
             displayValue:false,
 
@@ -348,7 +353,7 @@ function showBarcode(code){
 
             lineColor:"#000000",
 
-            margin:20
+            margin:5
         }
     );
 }
