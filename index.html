@@ -25,7 +25,7 @@ body{
 
 h1{
     margin-top:20px;
-    font-size:28px;
+    font-size:26px;
 }
 
 #camera-wrap{
@@ -89,29 +89,38 @@ h1{
 
     padding:10px;
 
+    background:#ffffff;
+}
+
+#barcode-wrap{
+
+    width:100%;
+
     overflow-x:auto;
+
+    margin-top:5px;
 }
 
 #memberCode{
 
-    font-size:16px;
+    font-size:18px;
 
     font-weight:bold;
 
-    margin-top:18px;
+    margin-top:10px;
 
-    white-space:nowrap;
+    letter-spacing:2px;
 
-    letter-spacing:1px;
+    color:#3d1d3d;
 }
 
 svg{
 
-    margin-top:20px;
-
     width:95%;
 
-    height:auto;
+    max-width:680px;
+
+    height:70px;
 }
 
 button{
@@ -171,9 +180,13 @@ canvas{
 
     <h1>POSでスキャンしてください</h1>
 
-    <div id="memberCode"></div>
+    <div id="barcode-wrap">
 
-    <svg id="barcode"></svg>
+        <svg id="barcode"></svg>
+
+    </div>
+
+    <div id="memberCode"></div>
 
     <br>
 
@@ -256,9 +269,11 @@ captureBtn.addEventListener(
         const cropHeight =
             vh * 0.16;
 
-        canvas.width = vw;
+        canvas.width =
+            vw;
 
-        canvas.height = cropHeight;
+        canvas.height =
+            cropHeight;
 
         context.drawImage(
 
@@ -335,6 +350,11 @@ captureBtn.addEventListener(
     }
 );
 
+function formatNumber(code){
+
+    return code.replace(/(.{4})/g, '$1 ').trim();
+}
+
 function showBarcode(code){
 
     scanArea.style.display =
@@ -344,21 +364,21 @@ function showBarcode(code){
         "block";
 
     memberCode.innerText =
-        code;
+        formatNumber(code);
 
     JsBarcode(
 
         "#barcode",
 
-        code,
+        "A" + code + "A",
 
         {
 
-            format:"CODE128",
+            format:"codabar",
 
-            width:1.2,
+            width:0.65,
 
-            height:80,
+            height:55,
 
             displayValue:false,
 
@@ -390,6 +410,3 @@ startCamera();
 </body>
 
 </html>
-apps-fileview.texmex_20260507.00_p2
-index.html
-index.html を表示しています。
