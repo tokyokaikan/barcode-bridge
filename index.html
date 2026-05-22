@@ -1,16 +1,16 @@
-# 元画像風バーコード版 index.html
-
-以下を `index.html` にそのまま貼り付けて保存してください。
-
-```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
 <title>Barcode Bridge</title>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 <style>
@@ -42,13 +42,21 @@ h1{
 }
 
 #scan-guide{
+
     position:absolute;
+
     left:12%;
-    top:45%;
+
+    top:20%;
+
     width:76%;
-    height:16%;
+
+    height:38%;
+
     border:3px solid red;
+
     box-sizing:border-box;
+
     pointer-events:none;
 }
 
@@ -107,7 +115,9 @@ canvas{
 }
 
 </style>
+
 </head>
+
 <body>
 
 <div id="scan-area">
@@ -128,7 +138,7 @@ canvas{
     </div>
 
     <div id="guide">
-        会員番号を赤枠に合わせてください
+        バーコードと会員番号を赤枠に合わせてください
     </div>
 
     <button id="captureBtn">
@@ -161,30 +171,48 @@ canvas{
 
 <script>
 
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const captureBtn = document.getElementById("captureBtn");
-const statusText = document.getElementById("status");
-const scanArea = document.getElementById("scan-area");
-const barcodeArea = document.getElementById("barcode-area");
-const memberCode = document.getElementById("memberCode");
+const video =
+    document.getElementById("video");
+
+const canvas =
+    document.getElementById("canvas");
+
+const captureBtn =
+    document.getElementById("captureBtn");
+
+const statusText =
+    document.getElementById("status");
+
+const scanArea =
+    document.getElementById("scan-area");
+
+const barcodeArea =
+    document.getElementById("barcode-area");
+
+const memberCode =
+    document.getElementById("memberCode");
 
 async function startCamera(){
 
     try{
 
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video:{
-                facingMode:"environment"
-            },
-            audio:false
-        });
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video:{
+                    facingMode:"environment"
+                },
+
+                audio:false
+            });
 
         video.srcObject = stream;
 
     }catch(error){
 
-        alert("カメラ起動失敗：" + error);
+        alert(
+            "カメラ起動失敗：" + error
+        );
     }
 }
 
@@ -192,63 +220,93 @@ captureBtn.addEventListener(
     "click",
     async () => {
 
-        statusText.innerText = "OCR解析中...";
+        statusText.innerText =
+            "OCR解析中...";
 
-        const context = canvas.getContext("2d");
+        const context =
+            canvas.getContext("2d");
 
-        const vw = video.videoWidth;
-        const vh = video.videoHeight;
+        const vw =
+            video.videoWidth;
 
-        const cropY = vh * 0.45;
-        const cropHeight = vh * 0.16;
+        const vh =
+            video.videoHeight;
 
-        canvas.width = vw;
-        canvas.height = cropHeight;
+        const cropY =
+            vh * 0.20;
+
+        const cropHeight =
+            vh * 0.38;
+
+        canvas.width =
+            vw;
+
+        canvas.height =
+            cropHeight;
 
         context.drawImage(
+
             video,
+
             0,
             cropY,
+
             vw,
             cropHeight,
+
             0,
             0,
+
             vw,
             cropHeight
         );
 
-        const imageData = canvas.toDataURL("image/png");
+        const imageData =
+            canvas.toDataURL("image/png");
 
         try{
 
-            const result = await Tesseract.recognize(
-                imageData,
-                'eng',
-                {
-                    tessedit_char_whitelist:'0123456789'
-                }
-            );
+            const result =
+                await Tesseract.recognize(
 
-            let text = result.data.text;
+                    imageData,
 
-            text = text.replace(/\s/g,'');
+                    'eng',
 
-            const match = text.match(/\d{16}/);
+                    {
+
+                        tessedit_char_whitelist:
+                            '0123456789'
+                    }
+                );
+
+            let text =
+                result.data.text;
+
+            text =
+                text.replace(/\s/g,'');
+
+            const match =
+                text.match(/\d{16}/);
 
             if(match){
 
-                const code = match[0];
+                const code =
+                    match[0];
 
                 showBarcode(code);
 
             }else{
 
-                statusText.innerText = "16桁数字が見つかりません";
+                statusText.innerText =
+                    "16桁数字が見つかりません";
             }
 
         }catch(error){
 
-            statusText.innerText = "OCR失敗";
+            statusText.innerText =
+                "OCR失敗";
+
             console.error(error);
         }
     }
@@ -261,21 +319,35 @@ function formatNumber(code){
 
 function showBarcode(code){
 
-    scanArea.style.display = "none";
-    barcodeArea.style.display = "block";
+    scanArea.style.display =
+        "none";
 
-    memberCode.innerText = formatNumber(code);
+    barcodeArea.style.display =
+        "block";
+
+    memberCode.innerText =
+        formatNumber(code);
 
     JsBarcode(
+
         "#barcode",
+
         code,
+
         {
+
             format:"CODE128",
+
             width:1.7,
+
             height:110,
+
             displayValue:false,
+
             background:"#ffffff",
+
             lineColor:"#000000",
+
             margin:0
         }
     );
@@ -283,28 +355,20 @@ function showBarcode(code){
 
 function goBack(){
 
-    barcodeArea.style.display = "none";
-    scanArea.style.display = "block";
-    statusText.innerText = "待機中";
+    barcodeArea.style.display =
+        "none";
+
+    scanArea.style.display =
+        "block";
+
+    statusText.innerText =
+        "待機中";
 }
 
 startCamera();
 
 </script>
+
 </body>
+
 </html>
-```
-
-## ポイント
-
-今回の版では、元画像に近い見た目にするため：
-
-* CODE128形式
-* 高さを高め
-* 線幅を少し太め
-* バーコードを上配置
-* 数字を4桁区切り表示
-
-にしています。
-
-画像を見る限り、元の会員証バーコードは NW-7 ではなく、CODE128系の可能性が高いです。
