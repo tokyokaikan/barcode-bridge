@@ -1,17 +1,20 @@
+# index.html（NW-7 / CODABAR対応版）
+
+以下をそのまま `index.html` にコピーして保存してください。
+
+```html
 <!DOCTYPE html>
 <html lang="ja">
 
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
 <title>Member OCR Bridge</title>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 <style>
@@ -29,11 +32,8 @@ h1{
 }
 
 #camera-wrap{
-
     position:relative;
-
     display:inline-block;
-
     width:100%;
 }
 
@@ -46,21 +46,13 @@ h1{
 }
 
 #scan-guide{
-
     position:absolute;
-
     left:12%;
-
     top:45%;
-
     width:76%;
-
     height:16%;
-
     border:3px solid red;
-
     box-sizing:border-box;
-
     pointer-events:none;
 }
 
@@ -84,33 +76,22 @@ h1{
 }
 
 #barcode-area{
-
     display:none;
-
     padding:10px;
-
     overflow-x:auto;
 }
 
 #memberCode{
-
     font-size:16px;
-
     font-weight:bold;
-
     margin-top:18px;
-
     white-space:nowrap;
-
     letter-spacing:1px;
 }
 
 svg{
-
     margin-top:20px;
-
     width:95%;
-
     height:auto;
 }
 
@@ -148,21 +129,15 @@ canvas{
     </div>
 
     <div id="guide">
-
         会員番号を赤枠に合わせてください
-
     </div>
 
     <button id="captureBtn">
-
         読み取る
-
     </button>
 
     <div id="status">
-
         待機中
-
     </div>
 
 </div>
@@ -178,9 +153,7 @@ canvas{
     <br>
 
     <button onclick="goBack()">
-
         戻る
-
     </button>
 
 </div>
@@ -346,19 +319,22 @@ function showBarcode(code){
     memberCode.innerText =
         code;
 
+    // NW-7(CODABAR)は開始/終了文字が必要
+    const nw7Code = "A" + code + "A";
+
     JsBarcode(
 
         "#barcode",
 
-        code,
+        nw7Code,
 
         {
 
-            format:"CODE128",
+            format:"codabar",
 
-            width:1.2,
+            width:2,
 
-            height:80,
+            height:90,
 
             displayValue:false,
 
@@ -390,3 +366,31 @@ startCamera();
 </body>
 
 </html>
+```
+
+## 重要
+
+NW-7（Codabar）は、開始・終了コードとして `A` を付与しています。
+
+つまり実際には：
+
+```text
+A3000199527766511A
+```
+
+をバーコード化しています。
+
+POS側が：
+
+* NW-7
+* Codabar
+* CODABAR
+
+のどれで認識しているか確認してください。
+
+また、POSスキャナ側で：
+
+* NW-7許可
+* Codabar許可
+
+設定がOFFになっている場合があります。
