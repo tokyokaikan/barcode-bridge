@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
 
 <meta charset="UTF-8">
@@ -7,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Barcode Bridge</title>
+<title>Member OCR Bridge</title>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
@@ -23,13 +24,16 @@ body{
 }
 
 h1{
-    font-size:28px;
     margin-top:20px;
+    font-size:28px;
 }
 
 #camera-wrap{
+
     position:relative;
+
     display:inline-block;
+
     width:100%;
 }
 
@@ -47,11 +51,11 @@ h1{
 
     left:12%;
 
-    top:20%;
+    top:45%;
 
     width:76%;
 
-    height:38%;
+    height:16%;
 
     border:3px solid red;
 
@@ -67,41 +71,47 @@ h1{
 }
 
 #captureBtn{
-    margin-top:20px;
+    margin-top:25px;
     font-size:22px;
-    padding:14px 34px;
+    padding:14px 36px;
 }
 
 #status{
-    margin-top:15px;
+    margin-top:18px;
     font-size:20px;
     font-weight:bold;
+    color:#333;
 }
 
 #barcode-area{
+
     display:none;
-    background:#ffffff;
+
     padding:10px;
+
+    overflow-x:auto;
 }
 
 #memberCode{
-    font-size:22px;
-    font-weight:bold;
-    letter-spacing:2px;
-    margin-top:20px;
-    color:#3d1d3d;
-}
 
-#barcode-wrap{
-    width:100%;
-    overflow-x:auto;
-    margin-top:20px;
+    font-size:16px;
+
+    font-weight:bold;
+
+    margin-top:18px;
+
+    white-space:nowrap;
+
+    letter-spacing:1px;
 }
 
 svg{
+
+    margin-top:20px;
+
     width:95%;
-    max-width:680px;
-    height:140px;
+
+    height:auto;
 }
 
 button{
@@ -138,15 +148,21 @@ canvas{
     </div>
 
     <div id="guide">
-        バーコードと会員番号を赤枠に合わせてください
+
+        会員番号を赤枠に合わせてください
+
     </div>
 
     <button id="captureBtn">
+
         読み取る
+
     </button>
 
     <div id="status">
+
         待機中
+
     </div>
 
 </div>
@@ -155,14 +171,16 @@ canvas{
 
     <h1>POSでスキャンしてください</h1>
 
-    <div id="barcode-wrap">
-        <svg id="barcode"></svg>
-    </div>
-
     <div id="memberCode"></div>
 
+    <svg id="barcode"></svg>
+
+    <br>
+
     <button onclick="goBack()">
+
         戻る
+
     </button>
 
 </div>
@@ -233,16 +251,14 @@ captureBtn.addEventListener(
             video.videoHeight;
 
         const cropY =
-            vh * 0.20;
+            vh * 0.45;
 
         const cropHeight =
-            vh * 0.38;
+            vh * 0.16;
 
-        canvas.width =
-            vw;
+        canvas.width = vw;
 
-        canvas.height =
-            cropHeight;
+        canvas.height = cropHeight;
 
         context.drawImage(
 
@@ -276,12 +292,18 @@ captureBtn.addEventListener(
                     {
 
                         tessedit_char_whitelist:
-                            '0123456789'
+                            '0123456789',
+
+                        logger:m => {
+                            console.log(m);
+                        }
                     }
                 );
 
             let text =
                 result.data.text;
+
+            console.log(text);
 
             text =
                 text.replace(/\s/g,'');
@@ -300,6 +322,7 @@ captureBtn.addEventListener(
 
                 statusText.innerText =
                     "16桁数字が見つかりません";
+
             }
 
         }catch(error){
@@ -312,11 +335,6 @@ captureBtn.addEventListener(
     }
 );
 
-function formatNumber(code){
-
-    return code.replace(/(.{4})/g, '$1 ').trim();
-}
-
 function showBarcode(code){
 
     scanArea.style.display =
@@ -326,7 +344,7 @@ function showBarcode(code){
         "block";
 
     memberCode.innerText =
-        formatNumber(code);
+        code;
 
     JsBarcode(
 
@@ -338,9 +356,9 @@ function showBarcode(code){
 
             format:"CODE128",
 
-            width:1.7,
+            width:1.2,
 
-            height:110,
+            height:80,
 
             displayValue:false,
 
